@@ -29,6 +29,11 @@
   --link-color: #8fbcbb;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+
 /* ============================
    Toggle Button Styles
    ============================ */

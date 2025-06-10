@@ -8,10 +8,17 @@
   <script src="{{ '/assets/js/theme-toggle.js' | relative_url }}" defer></script>
 </head>
 <body>
-  <!-- Quita esto si tu layout incluye otro <header> -->
-  <!-- {% include header.html %} -->
 
-  <!-- Tu contenido -->
-  {{ content }}
+  <!-- Cabecera única, con título de la página -->
+  <header id="site-header">
+    <h1>{{ page.title }}</h1>
+    <p><strong>Bienvenido a SIGIES!</strong><br>
+       Esta guía “todo en uno” te permitirá desplegar SIGIES en cualquier entorno Linux, macOS o Windows usando repositorios UCI.</p>
+  </header>
+
+  <!-- Tu contenido a partir de la tabla de contenidos -->
+  <main>
+    {{ content }}
+  </main>
 </body>
 </html>

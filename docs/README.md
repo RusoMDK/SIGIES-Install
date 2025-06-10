@@ -1,8 +1,3 @@
-> **Bienvenido a SIGIES!**
-> Esta guía “todo en uno” te permitirá desplegar SIGIES en cualquier entorno Linux, macOS o Windows usando repositorios UCI para ahorrar megas y acelerar descargas.
-
----
-
 ## 🗂️ Tabla de Contenidos
 
 1. [Requisitos Previos](#requisitos-previos)
