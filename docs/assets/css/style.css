@@ -1,26 +1,89 @@
 /* assets/css/style.css */
 
-/* Base styles */
+/* ============================
+   CSS Variables for Themes
+   ============================ */
+:root {
+  /* Light Theme Colors */
+  --bg-color: #fcfcfc;
+  --text-color: #2e3440;
+  --heading-color: #3b4252;
+  --pre-bg: #eceff4;
+  --pre-text: #2e3440;
+  --accent-color: #5e81ac;
+  --button-bg: #81a1c1;
+  --button-hover-bg: #5e81ac;
+  --link-color: #5e81ac;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme Colors */
+  --bg-color: #2e3440;
+  --text-color: #eceff4;
+  --heading-color: #d8dee9;
+  --pre-bg: #3b4252;
+  --pre-text: #eceff4;
+  --accent-color: #88c0d0;
+  --button-bg: #81a1c1;
+  --button-hover-bg: #8fbcbb;
+  --link-color: #8fbcbb;
+}
+
+/* ============================
+   Toggle Button Styles
+   ============================ */
+#theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: var(--button-bg);
+  border: none;
+  color: var(--pre-text);
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  z-index: 1000;
+}
+
+/* Oculta cabecera duplicada (Minima u otro partial) */
+.site-header, .header-wrapper, .page-header, .page-title, header.site-header {
+  display: none;
+}
+
+/* ============================
+   Base Styles
+   ============================ */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   line-height: 1.6;
   padding: 1rem;
   max-width: 800px;
   margin: auto;
-  background-color: #f9f9f9;
-  color: #333;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
-/* Headings */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 h1, h2, h3, h4 {
-  color: #2c3e50;
+  color: var(--heading-color);
   margin-top: 1.5rem;
 }
 
-/* Code blocks */
+/* ============================
+   Code Block Styles
+   ============================ */
 pre {
-  background: #2d2d2d;
-  color: #f8f8f2;
+  background: var(--pre-bg);
+  color: var(--pre-text);
   padding: 1rem;
   border-radius: 5px;
   overflow-x: auto;
@@ -28,20 +91,35 @@ pre {
   margin: 1.5rem 0;
 }
 
-/* Copy button */
+/* ============================
+   Copy Button Styles
+   ============================ */
 pre > button {
   position: absolute;
   top: 0.5em;
   right: 0.5em;
-  background: #3498db;
+  background: var(--button-bg);
   border: none;
-  color: #fff;
+  color: var(--pre-text);
   padding: 0.25rem 0.5rem;
   border-radius: 3px;
   cursor: pointer;
   font-size: 0.9rem;
+  transition: background 0.2s ease;
 }
 
 pre > button:hover {
-  background: #2980b9;
+  background: var(--button-hover-bg);
+}
+
+/* ============================
+   Accessibility & Readability
+   ============================ */
+@media (max-width: 600px) {
+  body {
+    padding: 0.5rem;
+  }
+  pre {
+    font-size: 0.9rem;
+  }
 }
