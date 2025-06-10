@@ -1,5 +1,3 @@
-# 🚀 SIGIES – Guía Completa de Instalación y Configuración
-
 > **Bienvenido a SIGIES!**
 > Esta guía “todo en uno” te permitirá desplegar SIGIES en cualquier entorno Linux, macOS o Windows usando repositorios UCI para ahorrar megas y acelerar descargas.
 
