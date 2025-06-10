@@ -1,7 +1,3 @@
----
-
-## title: "SIGIES – Guía de Instalación y Configuración"
-
 # 🚀 SIGIES – Guía Completa de Instalación y Configuración
 
 > **Bienvenido a SIGIES!**
