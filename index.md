@@ -21,7 +21,8 @@
 9. [Gestión de Usuarios Symfony](#gestión-de-usuarios-symfony)
 10. [Solución de Problemas Frecuentes](#solución-de-problemas-frecuentes)
 11. [Configuración de PHPStorm](#configuración-de-phpstorm)
-12. [Recursos & Contacto](#recursos--contacto)
+12. [Añadir “Copy Code” Button](#añadir-copy-code-button)
+13. [Recursos & Contacto](#recursos--contacto)
 
 ---
 
@@ -35,7 +36,7 @@
 - **Herramientas**
 
   - Docker 20.10+ & Docker Compose
-  - PHP 7.4+ (CLI, mbstring, xml)
+  - PHP 7.4+ (CLI, mbstring, xml)
   - Symfony CLI (opcional)
   - Git
   - SSH con permisos `sudo` (servidores remotos)
@@ -60,7 +61,7 @@ deb http://mirrors.uci.cu/ubuntu/ focal-security main restricted universe multiv
 sudo apt update
 ```
 
-### CentOS 8
+### CentOS 8
 
 Crea `/etc/yum.repos.d/uci.repo`:
 
@@ -169,7 +170,7 @@ Abre `http://localhost:5800` y confirma que carga. _(Si estás en UCI, verifica 
 
 Guarda como `pg_restore.sh` y haz ejecutable (`chmod +x pg_restore.sh`):
 
-```bash
+````bash
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -189,13 +190,35 @@ docker exec -e PGPASSWORD="${PASS}" -it "${CONTAINER}" \
   psql -U "${USER}" -d "${DB}" -f /tmp/backup.sql
 
 echo "🎉 Base de datos '${DB}' lista."
-```
+```...
 
-Ejecuta:
+---
 
-```bash
-./pg_restore.sh
-```
+## 🔧 Copy Code Button
+
+Para habilitar un botón “Copy” en cada bloque de código, añade este snippet al final de tu README:
+
+```html
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('pre > code').forEach((codeBlock) => {
+      const button = document.createElement('button');
+      button.textContent = 'Copy';
+      button.style.cssText = 'position: absolute; right: 0.5em; top: 0.5em;';
+      button.addEventListener('click', () => {
+        navigator.clipboard.writeText(codeBlock.textContent);
+        button.textContent = 'Copied!';
+        setTimeout(() => (button.textContent = 'Copy'), 2000);
+      });
+      const pre = codeBlock.parentNode;
+      pre.style.position = 'relative';
+      pre.insertBefore(button, codeBlock);
+    });
+  });
+</script>
+````
+
+Esto inyecta un botón “Copy” en cada bloque `<pre><code>...</code></pre>`, facilitando copiar.
 
 ---
 
@@ -214,8 +237,6 @@ SDR_CONNECTION_DATABASE_NAME=sigies-backup
 SDR_CONNECTION_HOST=localhost
 ```
 
-_(Puedes copiar `.env.example` si existe.)_
-
 ---
 
 ## 👤 Gestión de Usuarios Symfony
@@ -229,19 +250,19 @@ php bin/console fos:user:change-password
 
 ## 🛠️ Solución de Problemas Frecuentes
 
-| Síntoma                        | Causa posible              | Solución rápida                         |
-| ------------------------------ | -------------------------- | --------------------------------------- |
-| `docker-compose` no encontrado | PATH o versión             | Usa `docker compose up -d`              |
-| JSON inválido en daemon.json   | Sintaxis                   | Valida con `jq`, corrige comillas       |
-| Permiso denegado al restaurar  | Credenciales en script     | Revisa `USER`/`PASS` en `pg_restore.sh` |
-| Symfony no encuentra comandos  | Dependencias no instaladas | `composer install` + `php bin/console`  |
-| El sitio no carga              | Contenedor falló           | `docker-compose logs app`               |
+| Síntoma                        | Solución rápida                           |
+| ------------------------------ | ----------------------------------------- |
+| `docker-compose` no encontrado | Usa `docker compose up -d` o reinstala    |
+| JSON inválido en daemon.json   | Valida con `jq`                           |
+| Permiso denegado al restaurar  | Revisa credenciales en el script          |
+| Symfony no encuentra comandos  | `composer install` + revisa `bin/console` |
+| Sitio no carga                 | `docker-compose logs app`                 |
 
 ---
 
 ## 💡 Configuración de PHPStorm
 
-1. Descarga PHPStorm 2023.1.6 (tar.gz).
+1. Descarga PHPStorm 2023.1.6 (tar.gz).
 2. Reemplaza `phpstormv64.options` en `/bin`.
 3. Activa con el código de la UCI.
 4. En PHPStorm:
@@ -253,7 +274,7 @@ php bin/console fos:user:change-password
      /ruta/local/SIGIES → /var/www/html/SIGIES
      ```
 
-5. Instala Firebug (o Firefox Dev) y habilita el debug (escarabajo).
+5. Instala Firebug y habilita debug.
 
 ---
 
@@ -262,10 +283,7 @@ php bin/console fos:user:change-password
 - 🌐 [Docker Docs](https://docs.docker.com/)
 - 🐘 [PostgreSQL Docs](https://www.postgresql.org/docs/)
 - 🕸️ [Symfony Docs](https://symfony.com/doc/current)
-- 🤝 **Soporte SIGIES**
-
-  - Email: `sigies-dev@empresa.com`
-  - Slack: `#sigies-dev`
+- 🤝 **Soporte SIGIES**: `sigies-dev@empresa.com` / `#sigies-dev`
 
 ---
 
