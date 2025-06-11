@@ -1,114 +1,56 @@
-## 🗂️ Tabla de Contenidos
+# 🚀 Guía Completa de Instalación y Configuración SIGIES
 
-1. [Requisitos Previos](#requisitos-previos)
-2. [Configurar Repositorios UCI (Linux)](#configurar-repositorios-uci-linux)
-3. [Instalación de Docker & Docker Compose](#instalación-de-docker--docker-compose)
-4. [Configurar el Daemon de Docker (red UCI)](#configurar-el-daemon-de-docker-red-uci)
-5. [Verificar “Hello World”](#verificar-hello-world)
-6. [Clonar y Levantar SIGIES](#clonar-y-levantar-sigies)
-7. [Restauración de Base de Datos](#restauración-de-base-de-datos)
-
-   - [Script `pg_restore.sh`](#script-pg_restoresh)
-
-8. [Variables de Entorno (`.env`)](#variables-de-entorno-env)
-9. [Gestión de Usuarios Symfony](#gestión-de-usuarios-symfony)
-10. [Solución de Problemas Frecuentes](#solución-de-problemas-frecuentes)
-11. [Configuración de PHPStorm](#configuración-de-phpstorm)
-12. [Añadir “Copy Code” Button](#añadir-copy-code-button)
-13. [Recursos & Contacto](#recursos--contacto)
+Esta guía ofrece instrucciones detalladas para instalar y configurar SIGIES en diferentes plataformas (Linux, Windows y macOS) usando Docker y PHPStorm.
 
 ---
 
-## 🔧 Requisitos Previos
+## 📦 Requisitos previos
 
-- **SO soportados**
+### 🔸 Sistemas Operativos compatibles
 
-  - **Linux**: Ubuntu 20.04+, Debian 11, CentOS 8
-  - **macOS** (Catalina+), **Windows** 10/11
+- **Linux**: Ubuntu 20.04+, Debian 11, CentOS 8
+- **Windows**: 10 y 11
+- **macOS**: Ventura o superior
 
-- **Herramientas**
+### 🔸 Software necesario
 
-  - Docker 20.10+ & Docker Compose
-  - PHP 7.4+ (CLI, mbstring, xml)
-  - Symfony CLI (opcional)
-  - Git
-  - SSH con permisos `sudo` (servidores remotos)
+- Docker (v20.10+)
+- Docker Compose
+- PHPStorm (v2023.1.6)
+- Symfony CLI (PHP 7.4+)
 
----
+### 🔸 Acceso requerido
 
-## ⚙️ Configurar Repositorios UCI (Linux)
-
-> Ahorra ancho de banda usando los mirrors internos de la UCI.
-
-### Ubuntu / Debian
-
-Crea `/etc/apt/sources.list.d/uci.list` con:
-
-```text
-deb http://mirrors.uci.cu/ubuntu/ focal main restricted universe multiverse
-deb http://mirrors.uci.cu/ubuntu/ focal-updates main restricted universe multiverse
-deb http://mirrors.uci.cu/ubuntu/ focal-security main restricted universe multiverse
-```
-
-```bash
-sudo apt update
-```
-
-### CentOS 8
-
-Crea `/etc/yum.repos.d/uci.repo`:
-
-```ini
-[uci-base]
-name=UCI Base
-baseurl=http://mirrors.uci.cu/centos/8/os/$basearch/
-enabled=1
-gpgcheck=0
-```
-
-```bash
-sudo yum makecache
-```
+- Permisos administrativos (sudo en Linux y macOS)
+- Conexión VPN o red con acceso al dominio `uci.cu`
 
 ---
 
-## 🐳 Instalación de Docker & Docker Compose
+## 🛠 Instalación Docker
 
-### Linux (tras configurar repos UCI)
+### Linux
 
 ```bash
-sudo apt install -y docker.io docker-compose    # Ubuntu/Debian
-# o
-sudo yum install -y docker docker-compose       # CentOS
-
-sudo systemctl enable --now docker
+sudo apt-get update
+sudo apt-get install docker.io docker-compose
+sudo touch /etc/docker/daemon.json
 ```
 
 ### macOS
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install --cask docker
-brew install php@7.4 symfony-cli/tap/symfony-cli
-open /Applications/Docker.app
+brew install docker docker-compose
 ```
 
 ### Windows
 
-1. Instala [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/).
-2. En PowerShell (admin):
-
-   ```powershell
-   choco install php --version=7.4
-   ```
-
-3. Instala Symfony CLI desde [https://symfony.com/download](https://symfony.com/download)
+Descarga Docker Desktop desde [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/) y sigue las instrucciones del instalador.
 
 ---
 
-## 🛠️ Configurar el Daemon de Docker (red UCI)
+## ✅ Configuración Docker (Multiplataforma)
 
-Edita (o crea) `/etc/docker/daemon.json`:
+**Editar archivo:** `/etc/docker/daemon.json`
 
 ```json
 {
@@ -119,165 +61,162 @@ Edita (o crea) `/etc/docker/daemon.json`:
 }
 ```
 
-Si da error JSON, valida con:
+Reiniciar Docker:
 
-```bash
-sudo cat /etc/docker/daemon.json | jq .
-```
-
-Reinicia:
+- Linux y macOS:
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl restart docker
+sudo service docker restart
 ```
+
+- Windows: Reiniciar Docker Desktop manualmente.
 
 ---
 
-## ✅ Verificar “Hello World”
+## 🚧 Clonación y ejecución del proyecto SIGIES
 
-```bash
-docker pull docker.prod.uci.cu/docker-all/hello-world
-docker run --rm hello-world
-```
-
-Debes ver **“Hello from Docker!”**.
-
----
-
-## 📥 Clonar y Levantar SIGIES
+1. **Clonar el repositorio**:
 
 ```bash
 git clone -b <rama> https://gitlab.prod.uci.cu/fortes/SIGIES.git
-cd SIGIES
+```
+
+2. **Levantar contenedores** (dentro del directorio del proyecto):
+
+```bash
 docker-compose up -d
 ```
 
-Abre `http://localhost:5800` y confirma que carga. _(Si estás en UCI, verifica acceso a `_.uci.cu`.)\*
+3. **Verificar sitio web**:
+
+Abrir navegador y visitar: `http://localhost:5800`
 
 ---
 
-## 💾 Restauración de Base de Datos
+## 🔧 Restauración y configuración PostgreSQL
 
-### Script `pg_restore.sh`
+1. **Mover y descomprimir backup:**
 
-Guarda como `pg_restore.sh` y haz ejecutable (`chmod +x pg_restore.sh`):
-
-````bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-CONTAINER="sigies_postgres"
-DB="sigies-backup"
-BACKUP="./backups/backup.sql"
-USER="postgres"
-PASS="postgres"
-
-echo "✅ Restaurando [${DB}] en ${CONTAINER}..."
-docker cp "${BACKUP}" "${CONTAINER}":/tmp/backup.sql
-
-docker exec -e PGPASSWORD="${PASS}" -it "${CONTAINER}" \
-  psql -U "${USER}" -d postgres -c "DROP DATABASE IF EXISTS ${DB};" \
-  && psql -U "${USER}" -d postgres -c "CREATE DATABASE ${DB};"
-docker exec -e PGPASSWORD="${PASS}" -it "${CONTAINER}" \
-  psql -U "${USER}" -d "${DB}" -f /tmp/backup.sql
-
-echo "🎉 Base de datos '${DB}' lista."
-```...
-
----
-
-## 🔧 Copy Code Button
-
-Para habilitar un botón “Copy” en cada bloque de código, añade este snippet al final de tu README:
-
-```html
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('pre > code').forEach((codeBlock) => {
-      const button = document.createElement('button');
-      button.textContent = 'Copy';
-      button.style.cssText = 'position: absolute; right: 0.5em; top: 0.5em;';
-      button.addEventListener('click', () => {
-        navigator.clipboard.writeText(codeBlock.textContent);
-        button.textContent = 'Copied!';
-        setTimeout(() => (button.textContent = 'Copy'), 2000);
-      });
-      const pre = codeBlock.parentNode;
-      pre.style.position = 'relative';
-      pre.insertBefore(button, codeBlock);
-    });
-  });
-</script>
-````
-
-Esto inyecta un botón “Copy” en cada bloque `<pre><code>...</code></pre>`, facilitando copiar.
-
----
-
-## ⚙️ Variables de Entorno (`.env`)
-
-Crea/edita `./.env`:
-
-```dotenv
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5465
-POSTGRES_DB=sigies-backup
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-
-SDR_CONNECTION_DATABASE_NAME=sigies-backup
-SDR_CONNECTION_HOST=localhost
+```bash
+mv nombreFichero.tar /PGADMIN/pgadmin_data/storage/pgadmin2_uci.cu/
+cd /PGADMIN/pgadmin_data/storage/pgadmin2_uci.cu/
+gzip -d nombreFichero.tar
 ```
 
----
+Esto generará un fichero `.sql`.
 
-## 👤 Gestión de Usuarios Symfony
+2. **Editar y ejecutar script de restauración:**
+
+```bash
+nano pg_restore.sh
+```
+
+Editar variables:
+
+```bash
+POSTGRES_DB="sigies-backup"
+BACKUP_FILE="nuevo_nombre_backup.sql"
+POSTGRES_HOST="172.18.0.2"
+```
+
+Ejecutar:
+
+```bash
+sh pg_restore.sh
+```
+
+Luego actualizar los cambios en el archivo `.env`:
+
+```env
+POSTGRES_PORT=5465
+POSTGRES_HOST=localhost
+POSTGRES_DB=sigies-backup
+SDR_CONNECTION_DATABASE_NAME=sigies-backup
+SDR_CONNECTION_HOST="IP_DE_LA_PC"
+```
+
+3. **Actualizar la contraseña del usuario:**
 
 ```bash
 docker exec -it sigies_app bash
-php bin/console fos:user:change-password
+php app/console fos:user:change-password
+```
+
+Salir con `Ctrl+C` o `Ctrl+D`.
+
+---
+
+## 🛠 Configuración IDE PHPStorm
+
+1. Descargar PHPStorm v2023.1.6 ([sitio oficial](https://www.jetbrains.com/phpstorm/)).
+2. Descomprimir y reemplazar el fichero `phpstorm64.options` en la carpeta `bin` con el proporcionado.
+3. Editar última línea del fichero con ruta específica hacia carpeta del activador proporcionado.
+4. Activar con código en "Activation Code" usando el archivo proporcionado.
+
+### Configuración CLI PHPStorm
+
+- Abrir `File > Settings > PHP`.
+- Añadir nuevo CLI interpreter usando VPN (datos móviles).
+- En Path Mappings mapear:
+
+```plaintext
+/var/www/html/SIGIES
 ```
 
 ---
 
-## 🛠️ Solución de Problemas Frecuentes
+## ⚠️ Manejo de Errores y Soluciones
 
-| Síntoma                        | Solución rápida                           |
-| ------------------------------ | ----------------------------------------- |
-| `docker-compose` no encontrado | Usa `docker compose up -d` o reinstala    |
-| JSON inválido en daemon.json   | Valida con `jq`                           |
-| Permiso denegado al restaurar  | Revisa credenciales en el script          |
-| Symfony no encuentra comandos  | `composer install` + revisa `bin/console` |
-| Sitio no carga                 | `docker-compose logs app`                 |
+- **Problemas Docker**:
 
----
+  - Verifica servicio Docker activo (`systemctl status docker`).
+  - Reinicia Docker si da problemas de conexión.
 
-## 💡 Configuración de PHPStorm
+- **Errores PostgreSQL**:
 
-1. Descarga PHPStorm 2023.1.6 (tar.gz).
-2. Reemplaza `phpstormv64.options` en `/bin`.
-3. Activa con el código de la UCI.
-4. En PHPStorm:
+  - Verifica que el contenedor PostgreSQL esté activo.
+  - Ejecuta:
 
-   - **CLI Interpreter**: apunta a tu PHP local
-   - **Path Mappings**:
+```bash
+docker inspect sigies_postgres | grep IPAddress
+```
 
-     ```
-     /ruta/local/SIGIES → /var/www/html/SIGIES
-     ```
+- **Errores reportes Symfony**:
 
-5. Instala Firebug y habilita debug.
+  - Entra al contenedor y ejecuta:
 
----
-
-## 📖 Recursos & Contacto
-
-- 🌐 [Docker Docs](https://docs.docker.com/)
-- 🐘 [PostgreSQL Docs](https://www.postgresql.org/docs/)
-- 🕸️ [Symfony Docs](https://symfony.com/doc/current)
-- 🤝 **Soporte SIGIES**: `sigies-dev@empresa.com` / `#sigies-dev`
+```bash
+docker exec -it sigies_app bash
+php app/console -s
+cache:clear
+sigies:reinstall-report:sdr
+docker-compose down
+sudo chmod 777 -R *
+```
 
 ---
 
-_¡Todo listo para copiar, pegar y desplegar SIGIES sin sorpresas!_
+## 🔍 Configuración adicional
+
+**Persistence.xml:**
+
+```xml
+<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://IP_DE_LA_PC:5465/sdr"/>
+```
+
+- Actualizar en PGAdmin en `sys_user` la columna `subred` con la IP del contenedor obtenida mediante:
+
+```bash
+docker inspect nombre_del_contenedor
+```
+
+---
+
+## 📝 Recomendaciones finales
+
+- Usa VPN al configurar la red.
+- Mantén actualizado Docker y PHPStorm.
+- Informa de problemas o mejoras a tu equipo de desarrollo.
+
+¡Ahora tienes un entorno completamente configurado y listo para desarrollar con SIGIES!
